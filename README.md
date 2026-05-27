@@ -37,12 +37,13 @@ This project digitizes hostel mess operations by providing an efficient platform
 |------------|------------|
 | ![](assets/login.png) | ![](assets/dashboard.png) |
 
-| Menu Management | Meal Plan | Meals
+| Menu Management | Meal Plan 
 |-----------------|------------|
-| ![](assets/management.png) | ![](assets/meal_plan.png) | ![](assets/meals.png)
+| ![](assets/management.png) | ![](assets/meal_plan.png) |
 
-|-----------------|------------|
+
 | Meals |
+|-------|
 | ![](assets/meals.png) |
 
 ## Author

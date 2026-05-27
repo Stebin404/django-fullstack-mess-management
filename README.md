@@ -41,6 +41,10 @@ This project digitizes hostel mess operations by providing an efficient platform
 |-----------------|------------|
 | ![](assets/management.png) | ![](assets/meal_plan.png) | ![](assets/meals.png)
 
+|-----------------|------------|
+| Meals |
+| ![](assets/meals.png) |
+
 ## Author
 
 Stebin Limson

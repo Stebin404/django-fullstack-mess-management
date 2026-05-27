@@ -1,0 +1,60 @@
+{% extends 'messmate_app/base.html' %}
+
+{% block title %}Caterer Details{% endblock %}
+{% block body_class %}full-width{% endblock %}
+{% block container_class %}no-card{% endblock %}
+
+{% block content %}
+
+<style>
+    .caterer-box {
+        background: #ffffff;
+        padding: 25px;
+        max-width: 700px;
+        margin: 20px auto;
+        border-radius: 15px;
+        border: 1px solid #ffcc80;
+        box-shadow: 0 5px 14px rgba(255, 150, 50, 0.18);
+    }
+
+    h2, h3 {
+        color: #d35400;
+        margin-bottom: 12px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    p {
+        font-size: 16px;
+        color: #444;
+        margin-bottom: 10px;
+    }
+</style>
+
+
+<div class="caterer-box">
+    <h2>Caterer Details</h2>
+
+    <p><strong>Caterer Name:</strong> ABC Hostel Caterers</p>
+    <p><strong>Owner:</strong> Mr. Ramesh Kumar</p>
+    <p><strong>Contact Number:</strong> 9876543210</p>
+    <p><strong>Email:</strong> abc.caterers@example.com</p>
+    <p><strong>Address:</strong> Christ University Hostel Mess, Bengaluru</p>
+
+    <hr>
+
+    <h3>Certification Details</h3>
+    <p><strong>FSSAI Certification ID:</strong> FSSAI-IND-984726</p>
+    <p><strong>Valid Till:</strong> 31-12-2026</p>
+
+    <hr>
+
+    <h3>Service Description</h3>
+    <p>
+        Our caterer provides daily breakfast, lunch, and dinner services
+        to Christ University hostel students. Meal quality is monitored regularly
+        and feedback is reviewed daily for continuous improvement.
+    </p>
+</div>
+
+{% endblock %}

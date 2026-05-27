@@ -1,0 +1,233 @@
+{% extends 'messmate_app/base.html' %}
+{% load static %}
+
+{% block title %}Manage Subscriptions{% endblock %}
+{% block body_class %}full-width{% endblock %}
+{% block container_class %}no-card{% endblock %}
+{% block show_logo %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    body.full-width {
+        background: linear-gradient(135deg, #ff6b35 0%, #ff8b18 100%);
+    }
+
+    .content-wrapper {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-title {
+    margin-top: 80px;
+    font-size: 3rem;
+    font-weight: 900;
+    text-align: center;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #000 !important;
+    color: #000 !important;
+}
+
+    /* Section Title */
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #f7efef;
+        padding-left: 5px;
+    }
+
+    /* Card Wrapper */
+    .section-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 25px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        margin-bottom: 2.5rem;
+        border-top: 5px solid transparent;
+        transition: all .3s ease;
+    }
+
+    .section-card:hover {
+        border-top: 5px solid #ff6b35;
+        transform: translateY(-5px);
+        box-shadow: 0 20px 50px rgba(255, 107, 53, .25);
+    }
+
+    /* Table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    th {
+        background: linear-gradient(135deg, #ff6b35, #f7931e);
+        padding: 12px;
+        color: white;
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #eee;
+        font-size: 0.95rem;
+        color: #333;
+    }
+
+    tr:hover {
+        background: rgba(255, 107, 53, 0.08);
+    }
+
+    /* Buttons */
+    .btn-action {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        border: none;
+        padding: 8px 18px;
+        border-radius: 25px;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        margin-right: 8px;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    }
+
+    /* Empty Message */
+    .empty-msg {
+        color: #333;
+        font-size: 1rem;
+        padding: 8px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <h1 class="page-title">📋 Manage Subscriptions</h1>
+
+    <!-- Pending Subscriptions -->
+    <div class="section-card">
+        <h2 class="section-title">⏳ Pending Requests</h2>
+
+        {% if pending %}
+        <table>
+            <tr>
+                <th>Subscription ID</th>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Plan</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for s in pending %}
+            <tr>
+                <td>{{ s.Subscription_ID }}</td>
+                <td>{{ s.Student.Student_ID }}</td>
+                <td>{{ s.Student.First_Name }} {{ s.Student.Last_Name }}</td>
+                <td>{{ s.Plan_Name }}</td>
+                <td>₹{{ s.Monthly_Price }}</td>
+                <td>
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="approve_id" value="{{ s.Subscription_ID }}">
+                        <button class="btn-action" type="submit">Approve</button>
+                    </form>
+
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="reject_id" value="{{ s.Subscription_ID }}">
+                        <button class="btn-action" type="submit">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p class="empty-msg">No pending applications.</p>
+        {% endif %}
+    </div>
+
+    <!-- Active Subscriptions -->
+    <div class="section-card">
+        <h2 class="section-title">🟢 Active Subscriptions</h2>
+
+        {% if active %}
+        <table>
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Plan</th>
+                <th>Start</th>
+                <th>End</th>
+            </tr>
+
+            {% for s in active %}
+            <tr>
+                <td>{{ s.Student.Student_ID }}</td>
+                <td>{{ s.Student.First_Name }} {{ s.Student.Last_Name }}</td>
+                <td>{{ s.Plan_Name }}</td>
+                <td>{{ s.Start_Date }}</td>
+                <td>{{ s.End_Date }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p class="empty-msg">No active subscriptions.</p>
+        {% endif %}
+    </div>
+
+    <!-- Cancellation Requests -->
+    <div class="section-card">
+        <h2 class="section-title">🛑 Cancellation Requests</h2>
+
+        {% if cancel_pending %}
+        <table>
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Plan</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for s in cancel_pending %}
+            <tr>
+                <td>{{ s.Student.Student_ID }}</td>
+                <td>{{ s.Student.First_Name }} {{ s.Student.Last_Name }}</td>
+                <td>{{ s.Plan_Name }}</td>
+                <td>
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="cancel_approve_id" value="{{ s.Subscription_ID }}">
+                        <button class="btn-action" type="submit">Approve</button>
+                    </form>
+
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="cancel_reject_id" value="{{ s.Subscription_ID }}">
+                        <button class="btn-action" type="submit">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p class="empty-msg">No cancellation requests.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

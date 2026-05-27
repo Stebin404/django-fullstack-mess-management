@@ -1,0 +1,335 @@
+{% extends 'messmate_app/base.html' %}
+{% load static %}
+
+{% block title %}Update Today's Menu - MessMate{% endblock %}
+{% block body_class %}full-width{% endblock %}
+{% block container_class %}no-card{% endblock %}
+{% block show_logo %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    body.full-width {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        position: relative;
+    }
+
+    body.full-width::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .menu-wrapper {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        padding: 2rem;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+        background: rgba(255, 255, 255, 0.98);
+        padding: 1.2rem 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(255, 107, 53, 0.15);
+        margin-bottom: 3rem;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+    }
+
+    .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .nav-logo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 8px rgba(255, 107, 53, 0.3));
+    }
+
+    .nav-brand {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .btn-back {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        padding: 0.7rem 1.8rem;
+        border-radius: 30px;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        font-weight: 600;
+    }
+
+    .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        text-decoration: none;
+    }
+
+    .menu-container {
+        width: 90%;
+        max-width: 900px;
+        margin: 0 auto;
+        background: #ffffff;
+        padding: 3rem;
+        border-radius: 25px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        border: 2px solid #ffd7b5;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .menu-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+    }
+
+    .menu-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .menu-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        justify-content: center;
+    }
+
+    .menu-subtitle {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    /* Form Styling */
+    .meal-section {
+        background: linear-gradient(135deg, #fff5f0 0%, #ffe8dc 100%);
+        padding: 2rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        border-left: 5px solid #ff6b35;
+        transition: all 0.3s;
+    }
+
+    .meal-section:hover {
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.15);
+        transform: translateX(5px);
+    }
+
+    .meal-label {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ff6b35;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 1.2rem;
+        border: 2px solid #ffd7b5;
+        border-radius: 15px;
+        background: white;
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 120px;
+        transition: all 0.3s;
+    }
+
+    textarea:focus {
+        border-color: #ff6b35;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+        transform: translateY(-2px);
+    }
+
+    textarea::placeholder {
+        color: #999;
+        font-style: italic;
+    }
+
+    .helper-text {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 0.5rem;
+        font-style: italic;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+        width: 100%;
+        padding: 1.2rem;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-submit:hover::before {
+        left: 100%;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 1rem 1.5rem;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .menu-container {
+            padding: 2rem 1.5rem;
+        }
+
+        .menu-title {
+            font-size: 2rem;
+        }
+
+        .meal-section {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="menu-wrapper">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo-section">
+            <img src="{% static 'messmate_app/logo.png' %}" class="nav-logo" alt="MessMate Logo">
+            <span class="nav-brand">MessMate</span>
+        </div>
+        <a href="{% url 'caterer_dashboard' %}" class="btn-back">
+            ← Back to Dashboard
+        </a>
+    </nav>
+
+    <div class="menu-container">
+        <div class="menu-header">
+            <h2 class="menu-title">
+                <span>📋</span>
+                Update Today's Menu
+            </h2>
+            <p class="menu-subtitle">Set the delicious meals for today</p>
+        </div>
+
+        <form method="POST" onsubmit="return validateMenu()">
+            {% csrf_token %}
+
+            <div class="meal-section">
+                <label class="meal-label" for="breakfast">
+                    🌅 Breakfast
+                </label>
+                <textarea 
+                    name="breakfast" 
+                    id="breakfast" 
+                    placeholder="e.g., Idli, Sambar, Coconut Chutney, Coffee/Tea"
+                ></textarea>
+                <p class="helper-text">Enter breakfast items (optional if not updating)</p>
+            </div>
+
+            <div class="meal-section">
+                <label class="meal-label" for="lunch">
+                    ☀️ Lunch
+                </label>
+                <textarea 
+                    name="lunch" 
+                    id="lunch" 
+                    placeholder="e.g., Rice, Dal, Paneer Curry, Roti, Salad, Curd"
+                ></textarea>
+                <p class="helper-text">Enter lunch items (optional if not updating)</p>
+            </div>
+
+            <div class="meal-section">
+                <label class="meal-label" for="dinner">
+                    🌙 Dinner
+                </label>
+                <textarea 
+                    name="dinner" 
+                    id="dinner" 
+                    placeholder="e.g., Chapati, Mixed Veg Curry, Rice, Dal, Sweet Dish"
+                ></textarea>
+                <p class="helper-text">Enter dinner items (optional if not updating)</p>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                ✅ Update Menu
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+function validateMenu() {
+    let b = document.getElementById("breakfast").value.trim();
+    let l = document.getElementById("lunch").value.trim();
+    let d = document.getElementById("dinner").value.trim();
+
+    if (!b && !l && !d) {
+        alert("⚠️ Please fill at least one meal field to update the menu.");
+        return false;
+    }
+
+    return true;
+}
+</script>
+{% endblock %}

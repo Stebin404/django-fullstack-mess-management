@@ -1,0 +1,349 @@
+{% extends 'messmate_app/base.html' %}
+{% load static %}
+
+{% block title %}My Details - MessMate{% endblock %}
+{% block body_class %}full-width{% endblock %}
+{% block container_class %}no-card{% endblock %}
+{% block show_logo %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    body.full-width {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        position: relative;
+    }
+
+    body.full-width::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .details-wrapper {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        padding: 2rem;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+        background: rgba(255, 255, 255, 0.98);
+        padding: 1.2rem 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(255, 107, 53, 0.15);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+        margin-bottom: 3rem;
+        border-radius: 0;
+    }
+
+    .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .nav-logo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 8px rgba(255, 107, 53, 0.3));
+    }
+
+    .nav-brand {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .btn-back {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        padding: 0.7rem 1.8rem;
+        border-radius: 30px;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        text-decoration: none;
+    }
+
+    .details-container {
+        width: 90%;
+        max-width: 900px;
+        margin: 0 auto;
+        background: #ffffff;
+        padding: 3rem;
+        border-radius: 25px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        border: 2px solid #ffd7b5;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .details-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+    }
+
+    .details-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .details-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        justify-content: center;
+    }
+
+    .details-subtitle {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    /* Profile Section */
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        color: white;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+    }
+
+    /* Details Grid */
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .detail-item {
+        background: linear-gradient(135deg, #fff5f0 0%, #ffe8dc 100%);
+        padding: 1.5rem;
+        border-radius: 15px;
+        border-left: 4px solid #ff6b35;
+        transition: all 0.3s;
+    }
+
+    .detail-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 20px rgba(255, 107, 53, 0.15);
+    }
+
+    .detail-label {
+        font-size: 0.9rem;
+        color: #ff6b35;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .detail-value {
+        font-size: 1.1rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 30px;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 1rem 1.5rem;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+        }
+
+        .details-container {
+            padding: 2rem 1.5rem;
+        }
+
+        .details-title {
+            font-size: 2rem;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="details-wrapper">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo-section">
+            <img src="{% static 'messmate_app/logo.png' %}" class="nav-logo" alt="MessMate Logo">
+            <span class="nav-brand">MessMate</span>
+        </div>
+        <a href="{% url 'student_dashboard' %}" class="btn-back">
+            ← Back to Dashboard
+        </a>
+    </nav>
+
+    <div class="details-container">
+        <div class="details-header">
+            <div class="profile-avatar">👤</div>
+            <h2 class="details-title">
+                <span>📘</span>
+                My Profile Details
+            </h2>
+            <p class="details-subtitle">Your personal information and account details</p>
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-item">
+                <div class="detail-label">🆔 Student ID</div>
+                <div class="detail-value">{{ student.Student_ID }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">👤 Full Name</div>
+                <div class="detail-value">{{ student.First_Name }} {{ student.Last_Name }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">⚧ Gender</div>
+                <div class="detail-value">{{ student.Gender }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">🎂 Date of Birth</div>
+                <div class="detail-value">{{ student.DOB }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">📍 Street Address</div>
+                <div class="detail-value">{{ student.Street }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">🏙️ City</div>
+                <div class="detail-value">{{ student.City }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">📮 Pincode</div>
+                <div class="detail-value">{{ student.Pincode }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">📱 Contact Number</div>
+                <div class="detail-value">{{ student.Contact_No }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">📧 Email Address</div>
+                <div class="detail-value">{{ student.Email }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">📚 Course</div>
+                <div class="detail-value">{{ student.Course }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">🏠 Room Number</div>
+                <div class="detail-value">{{ student.Room_No }}</div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{% url 'student_dashboard' %}" class="btn-action">
+                🏠 Dashboard
+            </a>
+            <a href="{% url 'subscription_status' %}" class="btn-action">
+                💳 My Subscription
+            </a>
+            <a href="{% url 'todays_menu' %}" class="btn-action">
+                🍽️ Today's Menu
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

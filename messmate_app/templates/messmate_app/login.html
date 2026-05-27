@@ -1,0 +1,34 @@
+{% extends "main/base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<h2>Student Login</h2>
+
+<form id="loginForm">
+
+    <label>Username:</label><br>
+    <input type="text" id="username"><br><br>
+
+    <label>Password:</label><br>
+    <input type="password" id="password"><br><br>
+
+    <button type="button" onclick="login()">Login</button>
+
+</form>
+
+<script>
+function login() {
+    let user = document.getElementById("username").value;
+    let pass = document.getElementById("password").value;
+
+    if(user === "" || pass === "") {
+        alert("Enter username and password");
+    } else {
+        alert("Login clicked (backend not connected yet)");
+        window.location.href = "/dashboard/";
+    }
+}
+</script>
+
+{% endblock %}

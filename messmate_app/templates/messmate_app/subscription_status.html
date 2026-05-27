@@ -1,0 +1,354 @@
+{% extends 'messmate_app/base.html' %}
+{% load static %}
+{% block container_class %}no-card{% endblock %}
+{% block body_class %}full-width{% endblock %}
+
+{% block title %}Subscription Status - MessMate{% endblock %}
+
+{% block content %}
+
+<style>
+
+    /* ------------------ PAGE LAYOUT ------------------ */
+    .page-container {
+        padding: 40px 25px;
+        color: #333;
+    }
+
+    .page-header h2 {
+        font-size: 32px;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .page-header p {
+        color: rgba(255,255,255,0.85);
+        font-size: 16px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        font-weight: 800;
+        margin: 40px 0 20px;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* ------------------ CARD STYLE ------------------ */
+    .subscription-card,
+    .history-card {
+        background: white;
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        border: 3px solid transparent;
+        transition: 0.3s ease;
+    }
+
+    .subscription-card:hover,
+    .history-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 35px rgba(0,0,0,0.2);
+    }
+
+    .subscription-card.active {
+        border-color: #ff6b35;
+        background: #fff7f3;
+    }
+
+    /* ------------------ DETAIL ROWS ------------------ */
+    .subscription-detail {
+        display: flex;
+        justify-content: space-between;
+        padding: 14px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .subscription-detail:last-child {
+        border-bottom: none;
+    }
+
+    .label {
+        font-weight: 600;
+        color: #444;
+    }
+
+    .value {
+        font-weight: 700;
+        color: #111;
+    }
+
+    /* ------------------ STATUS BADGES ------------------ */
+    .status-badge {
+        padding: 6px 18px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 700;
+        color: white;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+
+    .active { background: linear-gradient(135deg, #10b981, #059669); }
+    .pending { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .cancelled, .rejected {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+    .expired {
+        background: linear-gradient(135deg, #9ca3af, #6b7280);
+    }
+
+    /* ------------------ BUTTONS ------------------ */
+    .cancel-btn,
+    .delete-btn {
+        width: 100%;
+        padding: 15px;
+        margin-top: 22px;
+        border-radius: 50px;
+        border: none;
+        font-weight: 700;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s ease;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+
+    .cancel-btn {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #991b1b, #7f1d1d);
+    }
+
+    .cancel-btn:hover,
+    .delete-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 28px rgba(0,0,0,0.22);
+    }
+
+    /* ------------------ NO SUBSCRIPTION ------------------ */
+    .no-subscription {
+        background: white;
+        padding: 50px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    .no-subscription p {
+        color: #333;
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+    .no-subscription a {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 14px 32px;
+        background: linear-gradient(135deg, #ff6b35, #f7931e);
+        color: white;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: 0.3s;
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+    }
+
+    .no-subscription a:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 26px rgba(255,107,53,0.45);
+    }
+
+    .icon {
+        font-size: 55px;
+        margin-bottom: 15px;
+    }
+
+    /* ------------------ DIVIDER ------------------ */
+    .divider {
+        height: 2px;
+        margin: 40px 0;
+        background: linear-gradient(
+            to right, 
+            transparent, 
+            rgba(255,255,255,0.45), 
+            transparent
+        );
+    }
+
+    /* ------------------ BACK LINK ------------------ */
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 26px;
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 40px;
+        background: rgba(255,255,255,0.15);
+        transition: 0.3s;
+    }
+
+    .back-link:hover {
+        background: rgba(255,255,255,0.28);
+        transform: translateY(-2px);
+    }
+
+</style>
+
+
+<div class="page-container">
+
+    <div class="page-header">
+        <h2>Subscription Status</h2>
+        <p>View and manage your meal plan subscriptions</p>
+    </div>
+
+    <!-- ---------------- CURRENT SUBSCRIPTION ---------------- -->
+    <h3 class="section-title">Current Subscription</h3>
+
+    {% if current %}
+    
+        <div class="subscription-card active">
+
+            <div class="subscription-detail">
+                <span class="label">Plan:</span>
+                <span class="value">{{ current.Plan_Name }}</span>
+            </div>
+
+            <div class="subscription-detail">
+                <span class="label">Price:</span>
+                <span class="value">₹{{ current.Monthly_Price }}</span>
+            </div>
+
+            <div class="subscription-detail">
+                <span class="label">Start Date:</span>
+                <span class="value">{{ current.Start_Date }}</span>
+            </div>
+
+            <div class="subscription-detail">
+                <span class="label">End Date:</span>
+                <span class="value">{{ current.End_Date }}</span>
+            </div>
+
+            <div class="subscription-detail">
+                <span class="label">Status:</span>
+                <span class="value">
+                    <span class="status-badge 
+                        {% if current.Status == 'Active' %}active
+                        {% elif current.Status == 'Cancelled' %}cancelled
+                        {% elif current.Status == 'Pending' %}pending
+                        {% elif current.Status == 'Rejected' %}rejected
+                        {% else %}expired{% endif %}">
+                        {{ current.Status }}
+                    </span>
+                </span>
+            </div>
+
+
+            {% if current.Status == "Active" %}
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="cancel_request" value="1">
+                <button class="cancel-btn"
+                    onclick="return confirm('Request cancellation?')">
+                    Request Cancellation
+                </button>
+            </form>
+            {% endif %}
+
+            {% if current.Status == "Pending" or current.Status == "Rejected" %}
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="delete_subscription" value="1">
+                <button class="delete-btn"
+                    onclick="return confirm('Delete this subscription permanently?')">
+                    Delete Subscription
+                </button>
+            </form>
+            {% endif %}
+
+        </div>
+
+    {% else %}
+
+        <div class="no-subscription">
+            <div class="icon">📭</div>
+            <p>You do not have any active subscriptions.</p>
+            <a href="{% url 'choose_plan' %}">
+                Subscribe to a Plan
+            </a>
+        </div>
+
+    {% endif %}
+
+    <!-- ---------------- HISTORY SECTION ---------------- -->
+    <div class="divider"></div>
+
+    <h3 class="section-title">Subscription History</h3>
+
+    {% if history %}
+        {% for s in history %}
+        
+        <div class="history-card">
+            <div class="subscription-detail">
+                <span class="label">Plan:</span>
+                <span class="value">{{ s.Plan_Name }}</span>
+            </div>
+
+            <div class="subscription-detail">
+                <span class="label">Price:</span>
+                <span class="value">₹{{ s.Monthly_Price }}</span>
+            </div>
+
+            <div class="subscription-detail">
+                <span class="label">Status:</span>
+                <span class="value">
+                    <span class="status-badge
+                        {% if s.Status == 'Active' %}active
+                        {% elif s.Status == 'Cancelled' %}cancelled
+                        {% elif s.Status == 'Pending' %}pending
+                        {% elif s.Status == 'Rejected' %}rejected
+                        {% else %}expired{% endif %}">
+                        {{ s.Status }}
+                    </span>
+                </span>
+            </div>
+
+            <div class="subscription-detail">
+                <span class="label">Start Date:</span>
+                <span class="value">{{ s.Start_Date }}</span>
+            </div>
+
+            <div class="subscription-detail">
+                <span class="label">End Date:</span>
+                <span class="value">{{ s.End_Date }}</span>
+            </div>
+
+            <div class="subscription-detail">
+                <span class="label">Requested On:</span>
+                <span class="value">{{ s.Requested_On }}</span>
+            </div>
+        </div>
+
+        {% endfor %}
+    {% else %}
+        <div class="history-card">
+            <p style="text-align:center;color:#555;font-weight:600;">No history available.</p>
+        </div>
+    {% endif %}
+
+    <a href="{% url 'student_dashboard' %}" class="back-link">← Back to Dashboard</a>
+
+</div>
+
+{% endblock %}
+
+
+

@@ -1,0 +1,115 @@
+{% extends 'messmate_app/base.html' %}
+
+{% block title %}Student Registration{% endblock %}
+
+{% block content %}
+
+<h2>Student Registration</h2>
+
+<form id="regForm" method="POST" onsubmit="return validateForm()">
+    {% csrf_token %}
+
+    <label>First Name:</label><br>
+    <input type="text" name="first_name" id="first_name"><br><br>
+
+    <label>Last Name:</label><br>
+    <input type="text" name="last_name" id="last_name"><br><br>
+
+    <label>Gender:</label><br>
+    <input type="text" name="gender" id="gender"><br><br>
+
+    <label>Date of Birth:</label><br>
+    <input type="date" name="dob" id="dob"><br><br>
+
+    <label>Street:</label><br>
+    <input type="text" name="street" id="street"><br><br>
+
+    <label>City:</label><br>
+    <input type="text" name="city" id="city"><br><br>
+
+    <label>Pincode:</label><br>
+    <input type="text" name="pincode" id="pincode"><br><br>
+
+    <label>Contact No:</label><br>
+    <input type="text" name="contact_no" id="contact_no"><br><br>
+
+    <label>Email:</label><br>
+    <input type="text" name="email" id="email"><br><br>
+
+    <label>Course:</label><br>
+    <input type="text" name="course" id="course"><br><br>
+
+    <label>Room No:</label><br>
+    <input type="text" name="room_no" id="room_no"><br><br>
+
+    <label>Username:</label><br>
+    <input type="text" name="username" id="username"><br><br>
+
+    <label>Password:</label><br>
+    <input type="password" name="password" id="password"><br><br>
+
+    <button type="submit">Register</button>
+</form>
+
+
+<script>
+function validateForm() {
+
+    // Get field values
+    let fn = document.getElementById("first_name").value.trim();
+    let ln = document.getElementById("last_name").value.trim();
+    let gender = document.getElementById("gender").value.trim();
+    let dob = document.getElementById("dob").value;
+    let street = document.getElementById("street").value.trim();
+    let city = document.getElementById("city").value.trim();
+    let pincode = document.getElementById("pincode").value.trim();
+    let contact = document.getElementById("contact_no").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let course = document.getElementById("course").value.trim();
+    let room = document.getElementById("room_no").value.trim();
+    let username = document.getElementById("username").value.trim();
+    let password = document.getElementById("password").value;
+
+    // Empty field check
+    if (!fn || !ln || !gender || !dob || !street || !city || !pincode ||
+        !contact || !email || !course || !room || !username || !password) {
+        alert("All fields must be filled out.");
+        return false;
+    }
+
+    // Email format check
+    let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        alert("Enter a valid email address.");
+        return false;
+    }
+
+    // Pincode check
+    if (pincode.length !== 6 || isNaN(pincode)) {
+        alert("Pincode must be 6 digits.");
+        return false;
+    }
+
+    // Contact number check
+    if (contact.length < 10 || isNaN(contact)) {
+        alert("Enter a valid contact number (digits only).");
+        return false;
+    }
+
+    // Username check
+    if (username.includes(" ")) {
+        alert("Username cannot contain spaces.");
+        return false;
+    }
+
+    // Password check
+    if (password.length < 6) {
+        alert("Password must be at least 6 characters long.");
+        return false;
+    }
+
+    return true; // Form is valid
+}
+</script>
+
+{% endblock %}

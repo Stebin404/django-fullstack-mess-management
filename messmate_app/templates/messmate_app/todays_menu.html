@@ -1,0 +1,120 @@
+{% extends 'messmate_app/base.html' %}
+{% load static %}
+
+{% block title %}Today's Menu{% endblock %}
+{% block container_class %}no-card{% endblock %}
+
+{% block content %}
+
+<style>
+    .menu-container {
+        width: 90%;
+        max-width: 900px;
+        margin: 30px auto;
+        text-align: center;
+    }
+
+    .menu-title {
+        font-size: 32px;
+        font-weight: 800;
+        color: #d35400;
+        margin-bottom: 25px;
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+
+    .menu-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        border: 1px solid #ffd4a8;
+        transition: 0.25s;
+        text-align: left;
+    }
+
+    .menu-img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+
+    .menu-body {
+        padding: 18px 20px;
+    }
+
+    .menu-header {
+        font-size: 20px;
+        font-weight: 700;
+        color: #d35400;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .menu-text {
+        font-size: 16px;
+        color: #333;
+    }
+
+    .back-btn {
+        display: inline-block;
+        margin-top: 28px;
+        background: #ff7b00;
+        padding: 12px 22px;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        text-decoration: none;
+    }
+</style>
+
+<div class="menu-container">
+
+    <h2 class="menu-title">🍽️ Today's Menu — {{ date }}</h2>
+
+    {% if menu %}
+    <div class="menu-grid">
+
+        <!-- BREAKFAST -->
+        <div class="menu-card">
+            <img class="menu-img" src="https://i.pinimg.com/1200x/d4/d0/55/d4d05510d95f793fd27855bbe5851f20.jpg">
+            <div class="menu-body">
+                <div class="menu-header">🌅 Breakfast</div>
+                <p class="menu-text">{{ menu.Breakfast }}</p>
+            </div>
+        </div>
+
+        <!-- LUNCH -->
+        <div class="menu-card">
+            <img class="menu-img" src="https://i.pinimg.com/736x/ba/f1/9e/baf19e3c66edc07aa06d882fe4422a99.jpg">
+            <div class="menu-body">
+                <div class="menu-header">☀️ Lunch</div>
+                <p class="menu-text">{{ menu.Lunch }}</p>
+            </div>
+        </div>
+
+        <!-- DINNER -->
+        <div class="menu-card">
+            <img class="menu-img" src="https://i.pinimg.com/736x/bc/14/e4/bc14e438dcd871fd39e63b7b993bdda5.jpg">
+            <div class="menu-body">
+                <div class="menu-header">🌙 Dinner</div>
+                <p class="menu-text">{{ menu.Dinner }}</p>
+            </div>
+        </div>
+
+    </div>
+    {% else %}
+        <p style="font-size:18px; margin-top:30px; color:#555;">No menu updated for today.</p>
+    {% endif %}
+
+    <a href="{% url 'student_dashboard' %}" class="back-btn">⬅ Back to Dashboard</a>
+
+</div>
+
+{% endblock %}

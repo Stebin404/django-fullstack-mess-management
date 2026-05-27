@@ -1,0 +1,582 @@
+{% extends 'messmate_app/base.html' %}
+{% load static %}
+
+{% block title %}Student Dashboard - MessMate{% endblock %}
+{% block body_class %}full-width{% endblock %}
+{% block container_class %}no-card{% endblock %}
+
+<!-- HIDE LOGO ON DASHBOARD -->
+{% block show_logo %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Override base.html background for dashboard */
+    body.full-width {
+        background: linear-gradient(135deg, #ff6b35 0%, #ee9734 100%);
+        position: relative;
+    }
+
+    body.full-width::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .dash-container {
+        width: 100%;
+        padding: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+        background: rgba(255, 255, 255, 0.98);
+        padding: 1.2rem 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(255, 107, 53, 0.15);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+    }
+
+    .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .nav-logo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 8px rgba(255, 107, 53, 0.3));
+    }
+
+    .nav-brand {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+        color: #ff6b35;
+    }
+
+    .btn-logout {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        padding: 0.7rem 1.8rem;
+        border-radius: 30px;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        font-weight: 600;
+    }
+
+    .btn-logout:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        text-decoration: none;
+    }
+
+    /* Hero Section */
+    .hero {
+        padding: 4rem 3rem;
+        text-align: center;
+        color: white;
+    }
+    .hero h1,
+    .hero p {
+    color: #222 !important;           /* make text dark */
+    -webkit-text-fill-color: #222 !important;
+    text-shadow: none !important;      /* remove glow */
+    font-weight: 800;
+}
+    .welcome-text {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .welcome-subtitle {
+        font-size: 1.4rem;
+        opacity: 0.95;
+        font-weight: 300;
+        animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Main Content Container */
+    .content-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 3rem;
+    }
+
+    /* Feature Cards Grid */
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 25px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        border: 2px solid transparent;
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 20px 50px rgba(255, 107, 53, 0.25);
+        border-color: #ff6b35;
+    }
+
+    .feature-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        filter: drop-shadow(0 5px 10px rgba(255, 107, 53, 0.3));
+    }
+
+    .feature-title {
+        font-size: 1.6rem;
+        color: #333;
+        margin-bottom: 0.8rem;
+        font-weight: 700;
+    }
+
+    .feature-subtitle {
+        color: #666;
+        margin-bottom: 1rem;
+        font-size: 1.05rem;
+    }
+
+    .feature-highlight {
+        color: #ff6b35;
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-explore {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        padding: 1rem 2.5rem;
+        border-radius: 30px;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: bold;
+        transition: all 0.3s;
+        box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-explore::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-explore:hover::before {
+        left: 100%;
+    }
+
+    .btn-explore:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        text-decoration: none;
+    }
+
+    /* Info Sections */
+    .info-section {
+        background: white;
+        border-radius: 25px;
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        border-left: 5px solid #ff6b35;
+    }
+
+    .info-section:hover {
+        box-shadow: 0 15px 40px rgba(255, 107, 53, 0.15);
+        transform: translateX(5px);
+    }
+
+    .section-title {
+        color: #ff6b35;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-weight: 700;
+    }
+
+    .info-text {
+        color: #555;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    /* Meal Timings Grid */
+    .timings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+
+    .timing-card {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        transition: all 0.3s;
+    }
+
+    .timing-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4);
+    }
+
+    .timing-card h4 {
+        font-size: 1.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .timing-card p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+    }
+
+    /* Guidelines List */
+    .guidelines-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .guidelines-list li {
+        padding: 1.3rem 1.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #fff5f0 0%, #ffe8dc 100%);
+        border-radius: 15px;
+        border-left: 5px solid #ff6b35;
+        color: #333;
+        transition: all 0.3s;
+        font-size: 1.05rem;
+    }
+
+    .guidelines-list li:hover {
+        transform: translateX(10px);
+        background: linear-gradient(135deg, #ffede3 0%, #ffd9c5 100%);
+        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.2);
+    }
+
+    /* Quick Actions Grid - Fixed 3 per row */
+    .action-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+
+    .action-card {
+        background: white;
+        padding: 2.5rem 2rem;
+        border-radius: 20px;
+        text-align: center;
+        border: 2px solid transparent;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .action-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+        transform: scaleX(0);
+        transition: transform 0.3s;
+    }
+
+    .action-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .action-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(255, 107, 53, 0.2);
+        border-color: #ff6b35;
+    }
+
+    .action-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 1rem;
+        filter: drop-shadow(0 4px 8px rgba(255, 107, 53, 0.2));
+    }
+
+    .action-card a {
+        display: block;
+        font-size: 1.15rem;
+        font-weight: bold;
+        color: #ff6b35;
+        text-decoration: none;
+        margin-top: 0.5rem;
+    }
+
+    .action-card a:hover {
+        color: #f7931e;
+        text-decoration: none;
+    }
+
+    /* Footer */
+    footer {
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 -5px 20px rgba(255, 107, 53, 0.1);
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .action-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 1rem 1.5rem;
+        }
+
+        .nav-links {
+            display: none;
+        }
+
+        .welcome-text {
+            font-size: 2rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .content-wrapper {
+            padding: 1.5rem;
+        }
+
+        .feature-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .nav-brand {
+            font-size: 1.5rem;
+        }
+
+        .nav-logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .hero {
+            padding: 2.5rem 1.5rem;
+        }
+
+        .welcome-text {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dash-container">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo-section">
+            <img src="{% static 'messmate_app/logo.png' %}" class="nav-logo" alt="MessMate Logo">
+            <span class="nav-brand">MessMate</span>
+        </div>
+        <div class="nav-links">
+        
+            <a href="{% url 'submit_complaint' %}">Support</a>
+            <a href="{% url 'student_logout' %}" class="btn-logout">Sign Out</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1 class="welcome-text">Welcome, {{ student.First_Name }}! 👋</h1>
+        <p class="welcome-subtitle">Your daily delicious meals await</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <!-- Feature Cards -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🍱</div>
+                <h3 class="feature-title">MEAL PLANS</h3>
+                <p class="feature-subtitle">Flexible Options</p>
+                <p class="feature-highlight">MAKES THE DAY</p>
+                <a href="{% url 'choose_plan' %}" class="btn-explore">Choose Plan →</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3 class="feature-title">TODAY'S MENU</h3>
+                <p class="feature-subtitle">Fresh & Hygienic</p>
+                <p class="feature-highlight">UPDATED DAILY</p>
+                <a href="{% url 'todays_menu' %}" class="btn-explore">View Menu →</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💳</div>
+                <h3 class="feature-title">SUBSCRIPTION</h3>
+                <p class="feature-subtitle">Manage Your Plan</p>
+                <p class="feature-highlight">ACTIVE STATUS</p>
+                <a href="{% url 'subscription_status' %}" class="btn-explore">Check Status →</a>
+            </div>
+        </div>
+
+        <!-- About Mess -->
+        <div class="info-section">
+            <h3 class="section-title">🏠 About Our Mess</h3>
+            <p class="info-text">
+                At MessMate, every meal is prepared with fresh ingredients, homely taste, 
+                and strict hygiene standards. Our experienced cooks ensure that you get 
+                nutritious, delicious food that feels like home. We understand that good 
+                food is essential for your academic success and overall well-being.
+            </p>
+        </div>
+
+        <!-- Meal Timings -->
+        <div class="info-section">
+            <h3 class="section-title">⏰ Meal Timings</h3>
+            <div class="timings-grid">
+                <div class="timing-card">
+                    <h4>🌅 Breakfast</h4>
+                    <p>7:30 AM – 9:00 AM</p>
+                </div>
+                <div class="timing-card">
+                    <h4>🍛 Lunch</h4>
+                    <p>12:30 PM – 2:00 PM</p>
+                </div>
+                <div class="timing-card">
+                    <h4>🌙 Dinner</h4>
+                    <p>7:30 PM – 9:00 PM</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guidelines -->
+        <div class="info-section">
+            <h3 class="section-title">📌 Important Guidelines</h3>
+            <ul class="guidelines-list">
+                <li>💰 Payment is offline only – please pay at the mess office</li>
+                <li>🍽️ Students must bring their own plates and glasses</li>
+                <li>♻️ Avoid food waste – take only what you can finish</li>
+                <li>🤝 Maintain discipline and respect in the dining hall</li>
+                <li>🚫 Outside food is not allowed during meal hours</li>
+            </ul>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="info-section">
+            <h3 class="section-title">⚡ Quick Actions</h3>
+            <div class="action-grid">
+
+                <div class="action-card">
+                    <img src="https://img.icons8.com/color/96/sad.png" class="action-icon" alt="Complaint">
+                    <a href="{% url 'submit_complaint' %}">Submit Complaint</a>
+                </div>
+
+                <div class="action-card">
+                    <img src="https://img.icons8.com/color/96/user.png" class="action-icon" alt="Profile">
+                    <a href="{% url 'student_details' %}">My Details</a>
+                </div>
+
+                <div class="action-card">
+                    <img src="https://img.icons8.com/color/96/exit.png" class="action-icon" alt="Logout">
+                    <a href="{% url 'student_logout' %}">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

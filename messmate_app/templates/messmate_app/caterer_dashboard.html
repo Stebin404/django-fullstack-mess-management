@@ -1,0 +1,385 @@
+{% extends 'messmate_app/base.html' %}
+{% load static %}
+
+{% block title %}Caterer Dashboard - MessMate{% endblock %}
+{% block body_class %}full-width{% endblock %}
+{% block container_class %}no-card{% endblock %}
+{% block show_logo %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    body.full-width {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        position: relative;
+    }
+
+    body.full-width::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 200%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .caterer-wrapper {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+        background: rgba(255, 255, 255, 0.98);
+        padding: 1.2rem 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(255, 107, 53, 0.15);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+    }
+
+    .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .nav-logo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 8px rgba(255, 107, 53, 0.3));
+    }
+
+    .nav-brand {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .nav-subtitle {
+        font-size: 0.9rem;
+        color: #666;
+        margin-left: 65px;
+        margin-top: -5px;
+    }
+
+    .btn-logout {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        padding: 0.7rem 1.8rem;
+        border-radius: 30px;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        font-weight: 600;
+    }
+
+    .btn-logout:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        text-decoration: none;
+    }
+
+    /* Hero Section */
+    .hero {
+        padding: 4rem 3rem;
+        text-align: center;
+        color: white;
+    }
+
+    .welcome-text {
+    margin-top: 80px;
+    font-size: 3rem;
+    font-weight: 900;
+    text-align: center;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #000 !important;
+    color: #000 !important;
+}
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Content Container */
+    .content-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 3rem;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 25px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        border: 2px solid transparent;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(255, 107, 53, 0.25);
+        border-color: #ff6b35;
+    }
+
+    .stat-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        filter: drop-shadow(0 5px 10px rgba(255, 107, 53, 0.3));
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .stat-value {
+        font-size: 3rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Actions Section */
+    .section-title {
+    margin-top: 80px;
+    font-size: 3rem;
+    font-weight: 900;
+    text-align: center;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #000 !important;
+    color: #000 !important;
+}
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .action-card {
+        background: white;
+        border-radius: 25px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        border: 2px solid transparent;
+        text-align: center;
+    }
+
+    .action-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+    }
+
+    .action-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 20px 50px rgba(255, 107, 53, 0.25);
+        border-color: #ff6b35;
+    }
+
+    .action-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        filter: drop-shadow(0 5px 10px rgba(255, 107, 53, 0.3));
+    }
+
+    .action-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    .action-description {
+        color: #666;
+        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+    }
+
+    .btn-action {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        padding: 1rem 2.5rem;
+        border-radius: 30px;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: bold;
+        transition: all 0.3s;
+        box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-action::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-action:hover::before {
+        left: 100%;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 1rem 1.5rem;
+        }
+
+        .welcome-text {
+            font-size: 2rem;
+        }
+
+        .content-wrapper {
+            padding: 1.5rem;
+        }
+
+        .stats-grid,
+        .actions-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="caterer-wrapper">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div>
+            <div class="logo-section">
+                <img src="{% static 'messmate_app/logo.png' %}" class="nav-logo" alt="MessMate Logo">
+                <span class="nav-brand">MessMate</span>
+            </div>
+            <div class="nav-subtitle">Caterer Management Portal</div>
+        </div>
+        <a href="{% url 'student_logout' %}" class="btn-logout">Sign Out</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1 class="welcome-text">Caterer Dashboard 👨‍🍳</h1>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <!-- Today's Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🌅</div>
+                <div class="stat-label">Breakfast Count</div>
+                <div class="stat-value">{{ breakfast_count }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">☀️</div>
+                <div class="stat-label">Lunch Count</div>
+                <div class="stat-value">{{ lunch_count }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🌙</div>
+                <div class="stat-label">Dinner Count</div>
+                <div class="stat-value">{{ dinner_count }}</div>
+            </div>
+        </div>
+
+        <!-- Management Actions -->
+        <h2 class="section-title">⚡ Management Actions</h2>
+        <div class="actions-grid">
+            <div class="action-card">
+                <div class="action-icon">📋</div>
+                <h3 class="action-title">Update Menu</h3>
+                <p class="action-description">Manage today's breakfast, lunch, and dinner menu</p>
+                <a href="{% url 'update_menu' %}" class="btn-action">Update Menu →</a>
+            </div>
+
+            <div class="action-card">
+                <div class="action-icon">💳</div>
+                <h3 class="action-title">Subscriptions</h3>
+                <p class="action-description">View and manage student meal subscriptions</p>
+                <a href="{% url 'manage_subscriptions' %}" class="btn-action">Manage →</a>
+            </div>
+
+            <div class="action-card">
+                <div class="action-icon">📢</div>
+                <h3 class="action-title">Complaints</h3>
+                <p class="action-description">Review and respond to student feedback</p>
+                <a href="{% url 'view_complaints' %}" class="btn-action">View Complaints →</a>
+            </div>
+
+            <div class="action-card">
+                <div class="action-icon">💰</div>
+                <h3 class="action-title">Monthly Price</h3>
+                <p class="action-description">Update the monthly meal plan pricing</p>
+                <a href="{% url 'update_monthly_price' %}" class="btn-action">Update Price →</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

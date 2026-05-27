@@ -1,0 +1,350 @@
+{% extends 'messmate_app/base.html' %}
+{% load static %}
+
+{% block title %}Student Complaints - MessMate{% endblock %}
+{% block body_class %}full-width{% endblock %}
+{% block container_class %}no-card{% endblock %}
+{% block show_logo %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    body.full-width {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        position: relative;
+    }
+
+    body.full-width::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .complaints-wrapper {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        padding: 2rem;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+        background: rgba(255, 255, 255, 0.98);
+        padding: 1.2rem 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(255, 107, 53, 0.15);
+        margin-bottom: 3rem;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+    }
+
+    .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .nav-logo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 8px rgba(255, 107, 53, 0.3));
+    }
+
+    .nav-brand {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .btn-back {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        padding: 0.7rem 1.8rem;
+        border-radius: 30px;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        font-weight: 600;
+    }
+
+    .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        text-decoration: none;
+    }
+
+    .complaints-container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .complaints-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .complaints-title {
+    margin-top: 80px;
+    font-size: 3rem;
+    font-weight: 900;
+    text-align: center;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #000 !important;
+    color: #000 !important;
+}
+
+    .complaints-subtitle {
+        color: white;
+        font-size: 1.2rem;
+        opacity: 0.95;
+    }
+
+    /* Complaints Count Badge */
+    .count-badge {
+        background: white;
+        color: #ff6b35;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        display: inline-block;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Complaint Cards */
+    .complaints-grid {
+        display: grid;
+        gap: 2rem;
+    }
+
+    .complaint-card {
+        background: white;
+        border-radius: 25px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .complaint-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+    }
+
+    .complaint-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(255, 107, 53, 0.2);
+        border-color: #ff6b35;
+    }
+
+    .complaint-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .student-info {
+        flex: 1;
+    }
+
+    .student-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ff6b35;
+        margin-bottom: 0.5rem;
+    }
+
+    .student-id {
+        color: #666;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .complaint-meta {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, #fff5f0 0%, #ffe8dc 100%);
+        padding: 0.6rem 1.2rem;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        color: #666;
+        font-weight: 600;
+    }
+
+    .complaint-content {
+        background: linear-gradient(135deg, #fff5f0 0%, #ffe8dc 100%);
+        padding: 1.5rem;
+        border-radius: 15px;
+        border-left: 4px solid #ff6b35;
+    }
+
+    .complaint-label {
+        font-size: 0.9rem;
+        color: #ff6b35;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.8rem;
+    }
+
+    .complaint-text {
+        color: #333;
+        line-height: 1.8;
+        font-size: 1.05rem;
+        white-space: pre-wrap;
+    }
+
+    /* Empty State */
+    .empty-state {
+        background: white;
+        border-radius: 25px;
+        padding: 4rem 2rem;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.5;
+    }
+
+    .empty-title {
+        font-size: 2rem;
+        color: #666;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .empty-text {
+        color: #999;
+        font-size: 1.1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 1rem 1.5rem;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .complaints-title {
+            font-size: 2rem;
+        }
+
+        .complaint-card {
+            padding: 1.5rem;
+        }
+
+        .complaint-header {
+            flex-direction: column;
+        }
+
+        .complaint-meta {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="complaints-wrapper">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo-section">
+            <img src="{% static 'messmate_app/logo.png' %}" class="nav-logo" alt="MessMate Logo">
+            <span class="nav-brand">MessMate</span>
+        </div>
+        <a href="{% url 'caterer_dashboard' %}" class="btn-back">
+            ← Back to Dashboard
+        </a>
+    </nav>
+
+    <div class="complaints-container">
+        <div class="complaints-header">
+            <h2 class="complaints-title">
+                <span>📢</span>
+                Student Complaints
+            </h2>
+            <p class="complaints-subtitle">Review and address student feedback</p>
+            {% if complaints %}
+                <div class="count-badge">
+                    📊 Total Complaints: {{ complaints|length }}
+                </div>
+            {% endif %}
+        </div>
+
+        {% if complaints %}
+            <div class="complaints-grid">
+                {% for c in complaints %}
+                    <div class="complaint-card">
+                        <div class="complaint-header">
+                            <div class="student-info">
+                                <div class="student-name">
+                                    👤 {{ c.Student.First_Name }} {{ c.Student.Last_Name }}
+                                </div>
+                                <div class="student-id">
+                                    Student ID: {{ c.Student.Student_ID }}
+                                </div>
+                            </div>
+                            <div class="complaint-meta">
+                                <div class="meta-item">
+                                    🆔 #{{ c.Complaint_ID }}
+                                </div>
+                                <div class="meta-item">
+                                    📅 {{ c.Date }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="complaint-content">
+                            <div class="complaint-label">Complaint Details</div>
+                            <div class="complaint-text">{{ c.Complaint_Text }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">😊</div>
+                <h3 class="empty-title">No Complaints Yet!</h3>
+                <p class="empty-text">Great job! Students haven't submitted any complaints.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

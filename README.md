@@ -31,6 +31,16 @@ This project digitizes hostel mess operations by providing an efficient platform
 * Mobile Application Support
 * AI-based Food Demand Prediction
 
+## Project Screenshots
+
+| Login Page | Dashboard |
+|------------|------------|
+| ![](assets/login.png) | ![](assets/dashboard.png) |
+
+| Menu Management | Meal Plan | Meals
+|-----------------|------------|
+| ![](assets/management.png) | ![](assets/meal_plan.png) | ![](assets/meals.png)
+
 ## Author
 
 Stebin Limson
